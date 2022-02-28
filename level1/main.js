@@ -33,7 +33,7 @@ function save(path, output){
             - 20% of what he sold if he sold 3 deals or more
             - 500 euros bonus if he sold more than 2000 euros in the month
  */
-function userCompensation(dealsCount, dealsAmount) {
+function computeCommission(dealsCount, dealsAmount) {
     var r = 0; 
     // compensation - fixed part
     if (dealsCount <= 2){ 
@@ -97,10 +97,10 @@ function main(inputPath, outputPath){
     for (var i in users){
         var dealsCount = users[i]['deals_count'];
         var dealsAmount = users[i]['deals_amount'];
-        var compensation = userCompensation(dealsCount, dealsAmount);
+        var commission = computeCommission(dealsCount, dealsAmount);
         result.push({
             'user_id': users[i]['id'],
-            'commission': compensation
+            'commission': commission
         })
     }
 
@@ -116,4 +116,4 @@ function main(inputPath, outputPath){
 // ----------------
 // test
 // ----------------
-main('./data/input.json', 'output.json');
+main('./data/input.json', 'output_js.json');

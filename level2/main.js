@@ -110,4 +110,4 @@ function main(inputPath, outputPath){
 // ----------------
 // test
 // ----------------
-main('./data/input.json', 'output.json');
+main('./data/input.json', 'output_js.json');

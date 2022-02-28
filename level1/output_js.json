@@ -1,0 +1,12 @@
+{
+	"commissions": [
+		{
+			"user_id": 1,
+			"commission": 130
+		},
+		{
+			"user_id": 2,
+			"commission": 1020
+		}
+	]
+}
