@@ -51,7 +51,7 @@ function getCommissionInterval(objective, progress){
  * @returns the commission associated to the deal.
  */
 function twoSplitsCommission(threshold, progress, amount, currInterval, nextInterval){
-    var amount1 = threshold - progress; 
+    let amount1 = threshold - progress; 
     return amount1 * currInterval + (amount - amount1) * nextInterval;
 }
 
@@ -63,8 +63,8 @@ function twoSplitsCommission(threshold, progress, amount, currInterval, nextInte
  * @returns the commission associated to the deal.
  */
 function computeCommission(objective, progress, amount) {
-    var currInterval = getCommissionInterval(objective, progress);
-    var nextInterval = getCommissionInterval(objective, progress + amount);
+    let currInterval = getCommissionInterval(objective, progress);
+    let nextInterval = getCommissionInterval(objective, progress + amount);
     var commission;
  
     if (currInterval === nextInterval){
@@ -84,9 +84,9 @@ function computeCommission(objective, progress, amount) {
     else if (currInterval == 0.05 && nextInterval == 0.15){
         // The salesman will switch from the 5% interval to the 15% interval.
         // Therefore the deal is split into the three intervals (5%, 10% and 15% interval)
-        var amount1 = 0.5 * objective - progress; // amount to reach 10% interval
-        var amount2 = 0.5 * objective; // amount to reach 15% interval
-        var amount3 = amount - (amount1 + amount2);
+        let amount1 = 0.5 * objective - progress; // amount to reach 10% interval
+        let amount2 = 0.5 * objective; // amount to reach 15% interval
+        let amount3 = amount - (amount1 + amount2);
         commission = amount1 * 0.05 + amount2 * 0.1 + amount3 * 0.15;
     }
     else {
@@ -106,17 +106,17 @@ function computeCommission(objective, progress, amount) {
  */
 function main(inputPath, outputPath){
     // load data
-    var jsonData = load(inputPath);
-    var users = jsonData['users'];
-    var deals = jsonData['deals'];
+    let jsonData = load(inputPath);
+    let users = jsonData['users'];
+    let deals = jsonData['deals'];
     
     // initialize outputs and auxiliary variables
-    var outDeals = [];
-    var outCommissions = []; 
-    var usersIds = [];
-    var monthProgress = [];
+    let outDeals = [];
+    let outCommissions = []; 
+    let usersIds = [];
+    let monthProgress = []; // maintains the progress (total amount of deals sold so far) of each user during the running month 
     for (var i in users){
-        var id = users[i]['id'];
+        let id = users[i]['id'];
         outCommissions.push({"user_id": id, "commission": {}});
         outDeals.push({"user_id": id, "deals": []})
         usersIds.push(id);
@@ -125,27 +125,35 @@ function main(inputPath, outputPath){
 
     // preprocess
     for (var i in deals){
-        var deal = deals[i];
-        var idx = usersIds.indexOf(deal['user']);
-        var commissions = outCommissions[idx]['commission'];
-        var objective = users[idx]['objective'];
-        var amount = deal['amount'];
-        var month = deal['payment_date'].substring(0,7);
+        let deal = deals[i];
+        let idx = usersIds.indexOf(deal['user']);
+        let commissions = outCommissions[idx]['commission'];
+        let objective = users[idx]['objective'];
+        let amount = deal['amount'];
+        let month = deal['payment_date'].substring(0,7);
         
         if (commissions.hasOwnProperty(month)){
+            // The user has already sold some deal(s) during this "month"
+            // Therefore, we use the associated progress stored in "monthProgress".
             progress = monthProgress[idx];
             c0 = commissions[month];
         }
         else{
+            // The user hasn't sold deals during this "month" as there are no commissions associated to this month in "outCommissions[idx]""
+            // Therefore, he made "0" progress so far for this month.
             progress = 0;
             c0 = 0;
         }
 
         c = computeCommission(objective, progress, amount)
         outCommissions[idx]['commission'][month] = c0 + c;
+        outDeals[idx]['deals'].push({"id": deal['id'],"commission": c});
+        // Update the user's progress in "monthProgress"
+        // Note that this auxiliary variable is implicitly reset  when switching from a "paiement month" to a next one 
+        // as in this case, in the previous if/else clause, "progress" is necessarily set to "0".
         monthProgress[idx] = progress + amount;
 
-        outDeals[idx]['deals'].push({"id": deal['id'],"commission": c});
+        
     }
 
     sortedDeals = [];
@@ -153,7 +161,7 @@ function main(inputPath, outputPath){
         sortedDeals.push(outDeals[i]['deals'])
     }
     // output
-    var output = {
+    let output = {
         "commissions": outCommissions,
         "deals": sortedDeals
     }

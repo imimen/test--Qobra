@@ -56,13 +56,13 @@ function computeCommission(objective, amount) {
             "deals_amount" (cumlative amount of deals sold by the user during the month),
  */
 function accumulateDeals(deals, users){
-    var usersIds = [];
+    let usersIds = [];
     for (var i in users){
         usersIds.push(users[i]['id'])
         users[i]['deals_amount'] = 0
     }
     for (var i in deals){
-        var j = usersIds.indexOf(deals[i]['user']);
+        let j = usersIds.indexOf(deals[i]['user']);
         users[j]['deals_amount'] += deals[i]['amount'];
     }
     return users;
@@ -79,19 +79,19 @@ function accumulateDeals(deals, users){
  */
 function main(inputPath, outputPath){
     // load data
-    var jsonData = load(inputPath);
-    var users = jsonData['users'];
-    var deals = jsonData['deals'];
+    let jsonData = load(inputPath);
+    let users = jsonData['users'];
+    let deals = jsonData['deals'];
 
     // initialize outputs
-    var result = [];
+    let result = [];
     
     users = accumulateDeals(deals, users);
 
     for (var i in users){
-        var amount = users[i]['deals_amount'];
-        var objective = users[i]['objective'];
-        var commission = computeCommission(objective, amount);
+        let amount = users[i]['deals_amount'];
+        let objective = users[i]['objective'];
+        let commission = computeCommission(objective, amount);
         result.push({
             'user_id': users[i]['id'],
             'commission': commission
@@ -99,7 +99,7 @@ function main(inputPath, outputPath){
     }
 
     // output
-    var output = {
+    let output = {
         "commissions": result
     }
     output = JSON.stringify(output, null, '\t');

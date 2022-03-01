@@ -34,7 +34,7 @@ function save(path, output){
             - 500 euros bonus if he sold more than 2000 euros in the month
  */
 function computeCommission(dealsCount, dealsAmount) {
-    var r = 0; 
+    let r = 0; 
     // compensation - fixed part
     if (dealsCount <= 2){ 
         r = 0.1 * dealsAmount;
@@ -59,15 +59,15 @@ function computeCommission(dealsCount, dealsAmount) {
             "deals_count" (number of deals sold by the user during the month)
  */
 function accumulateDeals(deals, users){
-    var usersIds = [];
+    let usersIds = [];
     for (var i in users){
         usersIds.push(users[i]['id'])
         users[i]['deals_amount'] = 0
         users[i]['deals_count'] = 0
     }
     for (var i in deals){
-        var deal = deals[i]
-        var j = usersIds.indexOf(deal['user']);
+        let deal = deals[i]
+        let j = usersIds.indexOf(deal['user']);
         users[j]['deals_amount'] += deal['amount'];
         users[j]['deals_count'] += 1;
     }
@@ -85,19 +85,19 @@ function accumulateDeals(deals, users){
  */
 function main(inputPath, outputPath){
     // load data
-    var jsonData = load(inputPath);
+    let jsonData = load(inputPath);
 
     // preprocess data
-    var users = jsonData['users'];
-    var deals = jsonData['deals'];
+    let users = jsonData['users'];
+    let deals = jsonData['deals'];
     users = accumulateDeals(deals, users);
     
     // compute commissions
-    var result = [];
+    let result = [];
     for (var i in users){
-        var dealsCount = users[i]['deals_count'];
-        var dealsAmount = users[i]['deals_amount'];
-        var commission = computeCommission(dealsCount, dealsAmount);
+        let dealsCount = users[i]['deals_count'];
+        let dealsAmount = users[i]['deals_amount'];
+        let commission = computeCommission(dealsCount, dealsAmount);
         result.push({
             'user_id': users[i]['id'],
             'commission': commission
@@ -105,7 +105,7 @@ function main(inputPath, outputPath){
     }
 
     // save output
-    var output = {
+    let output = {
         "commissions": result
     }
     output = JSON.stringify(output, null, '\t');
